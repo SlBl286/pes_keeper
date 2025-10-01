@@ -35,6 +35,7 @@ export const Header = () => {
       type: "knockout",
       rounds: 1,
       created_at: new Date(),
+      players: []
     },
   });
   async function onSubmit(values: TournamentSchemaType) {}

@@ -31,11 +31,7 @@ export const getTournamentSchema = () => {
     rounds: z.number(),
     players: z.array(
       z.object({
-        id: z.coerce.number().optional(),
-        name: z.coerce
-          .number({ message: "Chưa nhập năm báo cáo" })
-          .min(1900, "Năm phải lớn hơn năm 1900")
-          .max(new Date().getFullYear() - 1, "Năm phải nhở hơn năm hiện tại"),
+        name: z.string(),
         email: z.string().optional(),
         avatar: z.string().optional(),
       })
