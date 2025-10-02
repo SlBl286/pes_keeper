@@ -12,7 +12,6 @@ if (!globalThis.sqliteDb) {
     CREATE TABLE IF NOT EXISTS players (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
       name TEXT NOT NULL,
-      email TEXT UNIQUE,
       avatar TEXT -- link ảnh đại diện
     );
 
@@ -21,7 +20,7 @@ if (!globalThis.sqliteDb) {
       id INTEGER PRIMARY KEY AUTOINCREMENT,
       name TEXT NOT NULL,
       type TEXT NOT NULL CHECK(type IN ('knockout', 'round')),
-      status TEXT NOT NULL CHECK(type IN ('active', 'upcoming','completed')),
+      status TEXT NOT NULL CHECK(status IN ('active', 'upcoming','completed')),
       rounds INTEGER DEFAULT 1,
       created_at DATETIME DEFAULT CURRENT_TIMESTAMP
     );

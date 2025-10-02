@@ -18,14 +18,14 @@ export const getStatusBadge = (status: TournamentStatus) => {
         return (
           <Badge className="bg-amber-500 text-white hover:bg-amber-600">
             <Play className="w-3 h-3 mr-1" />
-            In Progress
+            Đang diễn ra
           </Badge>
         );
       case "completed":
         return (
           <Badge className="bg-green-600 text-white hover:bg-green-700">
             <CheckCircle2 className="w-3 h-3 mr-1" />
-            Completed
+            Hoàn thành
           </Badge>
         );
     }

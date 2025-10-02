@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import {
   Dialog,
   DialogContent,
+  DialogFooter,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
@@ -21,24 +22,44 @@ import {
   TournamentSchemaType,
   TournamentTypeEnum,
 } from "@/types/tournament";
-import { Plus, Trophy } from "lucide-react";
+import { Plus, Save, Trophy, X } from "lucide-react";
 import { useState } from "react";
-import { useForm } from "react-hook-form";
+import { useFieldArray, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Input } from "@/components/ui/input";
 import { Combobox } from "@/components/combobox";
+import { createTournament } from "../action";
 export const Header = () => {
   const form = useForm<TournamentSchemaType>({
     resolver: zodResolver(getTournamentSchema()),
     defaultValues: {
       name: "",
       type: "knockout",
+      status: "active",
       rounds: 1,
-      created_at: new Date(),
-      players: []
+      players: [],
     },
   });
-  async function onSubmit(values: TournamentSchemaType) {}
+  const { control } = form;
+  const {
+    fields: playerFields,
+    append: playeAppend,
+    remove: playeRemove,
+  } = useFieldArray({
+    control,
+    name: "players",
+  });
+  const handleAddPlayer = () => {
+    playeAppend({
+      name: "",
+    });
+  };
+  async function onSubmit(values: TournamentSchemaType) {
+    await createTournament(values);
+  }
+  const onInValid = (errors: Object) => {
+    console.log(errors);
+  };
   const { isOpen, setIsOpen } = useCreateTourDialog();
   return (
     <header className="border-b bg-card">
@@ -78,14 +99,14 @@ export const Header = () => {
               </DialogHeader>
               <Form {...form}>
                 <form
-                  onSubmit={form.handleSubmit(onSubmit)}
+                  onSubmit={form.handleSubmit(onSubmit, onInValid)}
                   className="w-full grid grid-cols-1 gap-4"
                 >
                   <FormField
                     control={form.control}
                     name="name"
                     render={({ field }) => (
-                      <FormItem className="w-full col-span-1 md:col-span-2 lg:col-span-4">
+                      <FormItem className="w-full col-span-1 ">
                         <FormLabel>Tên giải đấu</FormLabel>
                         <FormControl>
                           <Input {...field} placeholder="Tên giải đấu" />
@@ -98,7 +119,7 @@ export const Header = () => {
                     control={form.control}
                     name="type"
                     render={({ field }) => (
-                      <FormItem className="w-full col-span-1 md:col-span-2 lg:col-span-4">
+                      <FormItem className="w-full col-span-1 ">
                         <FormLabel>Loại giải đấu</FormLabel>
                         <FormControl>
                           <Combobox
@@ -128,19 +149,102 @@ export const Header = () => {
                       </FormItem>
                     )}
                   />
-                  <FormField
-                    control={form.control}
-                    name="rounds"
-                    render={({ field }) => (
-                      <FormItem className="w-full col-span-1 md:col-span-2 lg:col-span-4">
-                        <FormLabel>Số vòng</FormLabel>
-                        <FormControl>
-                          <Input {...field} placeholder="Số vòng" />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
+                  
+                    <FormField
+                      control={form.control}
+                      name="rounds"
+                      render={({ field }) => (
+                        <FormItem className="w-full col-span-1 ">
+                          <FormLabel>Số vòng</FormLabel>
+                          <FormControl>
+                            <Input
+                              {...field}
+                              placeholder="Số vòng"
+                              type="number"
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  
+                  <div className="w-full col-span-1 p-2 border-2 rounded-xl ">
+                    {playerFields.map((fielda, index) => (
+                      <div
+                        key={fielda.id + "award"}
+                        className="grid grid-cols-1 md:grid-cols-5 gap-3 mb-3 w-full"
+                      >
+                        <FormField
+                          control={form.control}
+                          name={`players.${index}.avatar`}
+                          render={({ field }) => (
+                            <FormItem className="w-full col-span-1 md:col-span-2">
+                              <FormLabel>Avatar</FormLabel>
+                              <FormControl>
+                                <Input
+                                  {...field}
+                                  placeholder="Tên người chơi"
+                                />
+                              </FormControl>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+                        <FormField
+                          control={form.control}
+                          name={`players.${index}.name`}
+                          render={({ field }) => (
+                            <FormItem className="w-full col-span-1 md:col-span-2">
+                              <FormLabel>Tên người chơi</FormLabel>
+                              <FormControl>
+                                <Input
+                                  {...field}
+                                  placeholder="Tên người chơi"
+                                />
+                              </FormControl>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+                        <Button
+                          className="w-full mt-6 text-primary-foreground"
+                          type="button"
+                          variant={"destructive"}
+                          onClick={() => playeRemove(index)}
+                        >
+                          <X />
+                        </Button>
+                      </div>
+                    ))}
+                    <Button
+                      type="button"
+                      variant={"outline"}
+                      appearance={"ghost"}
+                      className="w-full mt-4"
+                      onClick={handleAddPlayer}
+                    >
+                      <Plus />
+                      Thêm người chơi
+                    </Button>
+                  </div>
+                  <DialogFooter>
+                    <div className="float-end space-x-2">
+                      <Button
+                        type="button"
+                        variant={"destructive"}
+                        appearance={"default"}
+                        className="text-primary-foreground"
+                        onClick={() => setIsOpen(false)}
+                      >
+                        <X />
+                        Huỷ
+                      </Button>
+                      <Button type="submit" className="">
+                        <Save />
+                        Lưu
+                      </Button>
+                    </div>
+                  </DialogFooter>
                 </form>
               </Form>
             </DialogContent>

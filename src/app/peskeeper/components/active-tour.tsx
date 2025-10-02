@@ -44,7 +44,7 @@ export const ActiveTournaments = ({
               <CardHeader>
                 <div className="flex items-start justify-between">
                   <div className="space-y-2">
-                    <CardTitle className="text-xl">{tournament.name}</CardTitle>
+                    <CardTitle className="text-xl">{tournament.name.toUpperCase()}</CardTitle>
                     <div className="flex flex-wrap gap-2">
                       {getStatusBadge(tournament.status)}
                       {getFormatBadge(tournament.type)}
@@ -58,15 +58,15 @@ export const ActiveTournaments = ({
               <CardContent className="space-y-4">
                 <div className="flex items-center gap-2 text-sm text-muted-foreground">
                   <Calendar className="w-4 h-4" />
-                  <span>Bắt đầu: {tournament.created_at.toDateString()}</span>
+                  <span>Bắt đầu: {tournament.created_at}</span>
                 </div>
 
                 {tournament.rounds && tournament.rounds && (
                   <div className="space-y-2">
                     <div className="flex items-center justify-between text-sm">
-                      <span className="text-muted-foreground">Progress</span>
+                      <span className="text-muted-foreground">Quá trình</span>
                       <span className="font-semibold">
-                        Round {tournament.rounds} of {tournament.rounds}
+                        Vòng {tournament.rounds} / {tournament.rounds}
                       </span>
                     </div>
                     <div className="w-full bg-muted rounded-full h-2">

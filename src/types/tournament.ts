@@ -3,7 +3,7 @@ export const TournamentTypeEnum = z.enum(["knockout", "round"]);
 
 // TypeScript type tự động suy ra từ Zod
 export type TournamentType = z.infer<typeof TournamentTypeEnum>;
-export const TournamentStatusEnum = z.enum(["active", "upcoming", "completed"]);
+export const TournamentStatusEnum = z.enum(['active', 'upcoming','completed']);
 
 // TypeScript type tự động suy ra từ Zod
 export type TournamentStatus = z.infer<typeof TournamentStatusEnum>;
@@ -13,7 +13,7 @@ export interface Tournament {
   name: string;
   type: TournamentType;
   status: TournamentStatus;
-  created_at: Date;
+  created_at: string;
   rounds: number;
 }
 export interface TournamentPlayer {
@@ -24,15 +24,13 @@ export interface TournamentPlayer {
 
 export const getTournamentSchema = () => {
   return z.object({
-    name: z.string().nonempty("Tên sản phẩm đang để trống"), // v
+    name: z.string("Tên sản phẩm đang để trống").nonempty("Tên sản phẩm đang để trống"), // v
     type: TournamentTypeEnum,
     status: TournamentStatusEnum,
-    created_at: z.date(),
-    rounds: z.number(),
+    rounds: z.number().optional(),
     players: z.array(
       z.object({
         name: z.string(),
-        email: z.string().optional(),
         avatar: z.string().optional(),
       })
     ),
