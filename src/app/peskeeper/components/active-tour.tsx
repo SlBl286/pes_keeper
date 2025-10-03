@@ -2,20 +2,25 @@
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Tournament } from "@/types/tournament";
+import { Tournament, TournamentViewModel } from "@/types/tournament";
 import { Calendar, Play, Plus, Trash2, Trophy, Users } from "lucide-react";
 import { getStatusBadge } from "./status";
 import { getFormatBadge } from "./type";
 import { useCreateTourDialog } from "@/hooks/use-create-tour-dialog";
+import { Badge } from "@/components/ui/badge";
+import { useRouter } from "next/navigation";
 
 interface ActiveTournamentsProps {
-  activeTournaments: Tournament[];
+  activeTournaments: TournamentViewModel[];
 }
 export const ActiveTournaments = ({
   activeTournaments,
 }: ActiveTournamentsProps) => {
   const { setIsOpen: setCreateTourDialogOpen } = useCreateTourDialog();
-
+  const router = useRouter();
+  const goToTournament = (id: number) => {
+    router.push(`/peskeeper/${id}`);
+  };
   return (
     <>
       {activeTournaments.length === 0 ? (
@@ -28,7 +33,10 @@ export const ActiveTournaments = ({
             <p className="text-muted-foreground text-center mb-4">
               Tạo giải đấu để bắt đầu
             </p>
-            <Button onClick={() => setCreateTourDialogOpen(true)} className="hover:cursor-pointer">
+            <Button
+              onClick={() => setCreateTourDialogOpen(true)}
+              className="hover:cursor-pointer"
+            >
               <Plus className="w-4 h-4 mr-2" />
               Tạo gải đấu
             </Button>
@@ -44,7 +52,9 @@ export const ActiveTournaments = ({
               <CardHeader>
                 <div className="flex items-start justify-between">
                   <div className="space-y-2">
-                    <CardTitle className="text-xl">{tournament.name.toUpperCase()}</CardTitle>
+                    <CardTitle className="text-xl">
+                      {tournament.name.toUpperCase()}
+                    </CardTitle>
                     <div className="flex flex-wrap gap-2">
                       {getStatusBadge(tournament.status)}
                       {getFormatBadge(tournament.type)}
@@ -61,12 +71,12 @@ export const ActiveTournaments = ({
                   <span>Bắt đầu: {tournament.created_at}</span>
                 </div>
 
-                {tournament.rounds && tournament.rounds && (
+                {tournament.rounds && (
                   <div className="space-y-2">
                     <div className="flex items-center justify-between text-sm">
                       <span className="text-muted-foreground">Quá trình</span>
                       <span className="font-semibold">
-                        Vòng {tournament.rounds} / {tournament.rounds}
+                        Vòng {tournament.round_played} / {tournament.rounds}
                       </span>
                     </div>
                     <div className="w-full bg-muted rounded-full h-2">
@@ -74,7 +84,7 @@ export const ActiveTournaments = ({
                         className="bg-primary h-2 rounded-full transition-all"
                         style={{
                           width: `${
-                            (tournament.rounds / tournament.rounds) * 100
+                            (tournament.round_played / tournament.rounds) * 100
                           }%`,
                         }}
                       />
@@ -85,25 +95,28 @@ export const ActiveTournaments = ({
                 <div className="space-y-2">
                   <div className="flex items-center gap-2 text-sm font-semibold">
                     <Users className="w-4 h-4" />
-                    <span>Người tham gia (0)</span>
+                    <span>Người tham gia ({tournament.players.length})</span>
                   </div>
                   <div className="flex flex-wrap gap-2">
-                    {/* {tournament.participants
-                            .slice(0, 6)
-                            .map((participant) => (
-                              <Badge key={participant} variant="outline">
-                                {participant}
-                              </Badge>
-                            ))}
-                          {tournament.participants.length > 6 && (
-                            <Badge variant="outline">
-                              +{tournament.participants.length - 6} more
-                            </Badge>
-                          )} */}
+                    {tournament.players.slice(0, 6).map((p) => (
+                      <Badge key={p.id} variant="outline">
+                        {p.name}
+                      </Badge>
+                    ))}
+                    {tournament.players.length > 6 && (
+                      <Badge variant="outline">
+                        +{tournament.players.length - 6} more
+                      </Badge>
+                    )}
                   </div>
                 </div>
 
-                <Button className="w-full" variant="primary">
+                <Button
+                  className="w-full"
+                  variant="primary"
+                  type="button"
+                  onClick={() => goToTournament(tournament.id)}
+                >
                   <Play className="w-4 h-4 mr-2" />
                   Quản lý giải đấu
                 </Button>

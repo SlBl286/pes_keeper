@@ -44,14 +44,6 @@ import { CompletedTournaments } from "./components/completed-tour";
 export default async function TournamentsPage() {
   const tournaments = await listTournaments();
 
-  
-
-  const createTournament = () => {};
-
-  const toggleParticipant = (player: string) => {};
-
-  const deleteTournament = (id: number) => {};
-
   const upcomingTournaments = tournaments.filter(
     (t) => t.status === "upcoming"
   );

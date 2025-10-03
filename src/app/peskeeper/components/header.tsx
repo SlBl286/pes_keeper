@@ -29,6 +29,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Input } from "@/components/ui/input";
 import { Combobox } from "@/components/combobox";
 import { createTournament } from "../action";
+import AvatarPicker from "@/components/avatar-picker";
 export const Header = () => {
   const form = useForm<TournamentSchemaType>({
     resolver: zodResolver(getTournamentSchema()),
@@ -149,25 +150,26 @@ export const Header = () => {
                       </FormItem>
                     )}
                   />
-                  
-                    <FormField
-                      control={form.control}
-                      name="rounds"
-                      render={({ field }) => (
-                        <FormItem className="w-full col-span-1 ">
-                          <FormLabel>Số vòng</FormLabel>
-                          <FormControl>
-                            <Input
-                              {...field}
-                              placeholder="Số vòng"
-                              type="number"
-                            />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                  
+                  <FormField
+                    control={form.control}
+                    name="rounds"
+                    render={({ field }) => (
+                      <FormItem className="w-full col-span-1 ">
+                        <FormLabel>Số vòng</FormLabel>
+                        <FormControl>
+                          <Input
+                            {...field}
+                            onChange={(e) =>
+                              field.onChange(Number(e.currentTarget.value))
+                            }
+                            placeholder="Số vòng"
+                            type="number"
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
                   <div className="w-full col-span-1 p-2 border-2 rounded-xl ">
                     {playerFields.map((fielda, index) => (
                       <div
@@ -178,13 +180,12 @@ export const Header = () => {
                           control={form.control}
                           name={`players.${index}.avatar`}
                           render={({ field }) => (
-                            <FormItem className="w-full col-span-1 md:col-span-2">
-                              <FormLabel>Avatar</FormLabel>
+                            <FormItem className="w-full col-span-1 md:col-span-2 ">
+                              <FormLabel>Ảnh đại diện</FormLabel>
                               <FormControl>
-                                <Input
-                                  {...field}
-                                  placeholder="Tên người chơi"
-                                />
+                                <div className="flex items-center justify-center w-full">
+                                  <AvatarPicker />
+                                </div>
                               </FormControl>
                               <FormMessage />
                             </FormItem>
@@ -207,7 +208,7 @@ export const Header = () => {
                           )}
                         />
                         <Button
-                          className="w-full mt-6 text-primary-foreground"
+                          className="w-full md:mt-9 text-primary-foreground"
                           type="button"
                           variant={"destructive"}
                           onClick={() => playeRemove(index)}
